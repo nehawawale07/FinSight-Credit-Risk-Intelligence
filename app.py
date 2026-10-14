@@ -192,10 +192,19 @@ if run_prediction:
 
     
     # SHAP-style explanation for this individual prediction
-    shap_values = model.get_feature_importance(
+    
+    from catboost import Pool
+
+    shap_pool = Pool(
         data=input_df,
-        type="ShapValues"
+        cat_features=categorical_features
+    )
+
+    shap_values = model.get_feature_importance(
+         data=shap_pool,
+         type="ShapValues"
     )[0]
+
 
     contributions = pd.DataFrame({
         "Feature": feature_columns,
