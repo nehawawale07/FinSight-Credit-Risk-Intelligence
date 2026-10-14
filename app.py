@@ -190,6 +190,53 @@ if run_prediction:
 
     probability = float(model.predict_proba(input_df)[0, 1])
 
+    
+    # SHAP-style explanation for this individual prediction
+    shap_values = model.get_feature_importance(
+        data=input_df,
+        type="ShapValues"
+    )[0]
+
+    contributions = pd.DataFrame({
+        "Feature": feature_columns,
+        "Contribution": shap_values[:-1]
+    })
+
+    # Show the features with the largest absolute contributions
+    contributions["AbsoluteContribution"] = (
+        contributions["Contribution"].abs()
+    )
+
+    top_contributions = (
+        contributions
+        .sort_values("AbsoluteContribution", ascending=False)
+        .head(10)
+        .sort_values("Contribution")
+    )
+
+    st.subheader("Why did the model make this prediction?")
+    st.caption(
+        "Positive contributions push the model output toward "
+        "TARGET=1; negative contributions push it away. "
+        "These are contributions to the raw model output, not "
+        "percentage-point changes in probability."
+    )
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    ax.barh(
+        top_contributions["Feature"],
+        top_contributions["Contribution"]
+    )
+    ax.axvline(0, linewidth=1)
+    ax.set_xlabel("SHAP contribution (raw model output)")
+    ax.set_title("Top Individual Prediction Contributors")
+
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
+
+
     st.divider()
     st.header("Model output")
 
