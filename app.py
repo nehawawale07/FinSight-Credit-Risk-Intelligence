@@ -127,7 +127,7 @@ if "AGE_YEARS" in feature_columns:
         "Age (years)",
         min_value=18,
         max_value=100,
-        value=int(np.clip(get_default("AGE_YEARS", 40), 18, 100))
+        value=35
     )
     applicant["AGE_YEARS"] = float(age)
 
@@ -304,3 +304,35 @@ st.caption(
     "may differ on new populations. This project is for learning and "
     "portfolio demonstration only; it is not validated for real lending."
 )
+
+# Model comparison section
+comparison_path = os.path.join(BASE_DIR, "model_comparison.csv")
+
+if os.path.exists(comparison_path):
+    st.divider()
+    st.header("Model comparison")
+
+    comparison_df = pd.read_csv(comparison_path)
+
+    st.write(
+        "Compare the validation performance of the baseline model "
+        "and the CatBoost model."
+    )
+
+    st.dataframe(
+        comparison_df.round(4),
+        use_container_width=True,
+        hide_index=True
+    )
+
+    chart_df = comparison_df.set_index("Model")[
+        ["ROC_AUC", "Average_Precision"]
+    ]
+
+    st.bar_chart(chart_df)
+else:
+    st.info(
+        "Upload model_comparison.csv to the repository "
+        "to enable model comparison."
+    )
+
