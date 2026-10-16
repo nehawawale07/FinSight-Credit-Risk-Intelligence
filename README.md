@@ -53,15 +53,35 @@ Validation results from the current implementation:
 
 These are the reported validation metrics for the current model. Results may vary with different data splits, preprocessing, or model configurations. They do not establish performance on future applicants.
 
+
+## Project Architecture
+
+```mermaid
+flowchart TD
+    A["Home Credit Dataset"] --> B["Data Cleaning and EDA"]
+    B --> C["Feature Engineering"]
+    C --> D["Train / Validation Split"]
+    D --> E["Logistic Regression Baseline"]
+    D --> F["CatBoost Classifier"]
+    E --> G["Model Evaluation"]
+    F --> G
+    G --> H["ROC-AUC and Average Precision"]
+    F --> I["SHAP Explanations"]
+    F --> J["Saved Model and Metadata"]
+    J --> K["Streamlit Dashboard"]
+    H --> K
+    I --> K
+```
+
 ## How It Works
 
-1. Load and inspect the historical dataset.
-2. Explore missing values and relationships between features.
-3. Engineer financial ratios and age-related features.
-4. Train and validate classification models.
-5. Compare ROC-AUC and Average Precision.
-6. Inspect global feature importance and individual SHAP contributions.
-7. Load the trained model into the Streamlit dashboard.
+1. Load and explore the historical dataset.
+2. Clean the data and engineer financial ratios.
+3. Train Logistic Regression and CatBoost models.
+4. Evaluate the models using ROC-AUC and Average Precision.
+5. Explain predictions using SHAP contributions.
+6. Deploy the trained model through an interactive Streamlit application.
+
 
 ## Run Locally
 
